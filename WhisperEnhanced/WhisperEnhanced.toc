@@ -1,0 +1,4 @@
+## Interface: 30300
+## Title: WhisperEnhanced
+## Notes: Auto-runs /who on whispers, adds class color, level, class, and race to the sender's name.
+Core.lua
