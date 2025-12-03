@@ -33,20 +33,14 @@ end
 -- Event Handler for Whispers and Who Results
 local function OnEvent(self, event, ...)
     if event == "CHAT_MSG_WHISPER" then
-        -- Arguments: message, sender, language, senderIcon, isBNet, ...
         local message, sender = ...
         
-        -- Store the message in the queue using the sender's name as the key
-        -- This data will be used later when the /who result returns.
         WhisperQueue[sender] = {
             message = message,
             originalSender = sender,
         }
         
-        -- Run the /who query on the sender.
-        -- This will trigger the WHO_LIST_UPDATE event when data is available.
-        SendWho(sender)
-        
+        SendWho(sender)   
     elseif event == "WHO_LIST_UPDATE" then
         
         local numResults = GetNumWhoResults()
@@ -98,7 +92,6 @@ local function OnEvent(self, event, ...)
     end
 end
 
--- Register for the required events
 WhoWhisperer:SetScript("OnEvent", OnEvent)
 WhoWhisperer:RegisterEvent("CHAT_MSG_WHISPER")
 WhoWhisperer:RegisterEvent("WHO_LIST_UPDATE")
@@ -108,33 +101,27 @@ WhoWhisperer:RegisterEvent("WHO_LIST_UPDATE")
 -- 2. CHAT FILTER (THE "HIDE WHO" AND "SUPPRESS WHISPER" LOGIC)
 --------------------------------------------------------------------------------
 
--- This filter is attached to all chat frames and runs before the message is displayed.
--- Returning 'true' allows the message to display. Returning 'nil' or 'false' suppresses it.
 local function ChatFilter(self, event, msg, ...)
-    -- Filter 1: Suppress the default display of the incoming whisper.
     if event == "CHAT_MSG_WHISPER" then
-        -- If we are currently re-printing the message (flag is true), allow it to display.
-        if IsPrintingEnhanced then
-            return true
-        end
-        -- Otherwise, the message is being processed for the first time; suppress it until we re-print it enhanced.
-        local sender = select(2, ...)
-        if WhisperQueue[sender] then
-            -- Found the sender in the queue, suppress the message until the /who data returns
-            return false 
-        end
+	return false
     end
     
     -- Filter 2: Suppress the results of the automated /who command.
     -- The output of a /who command is CHAT_MSG_SYSTEM, and it usually contains "Found X matches" or the list lines.
     -- We can check for known system messages related to /who
-    if event == "CHAT_MSG_SYSTEM" and msg and string.find(msg, GetText("WHO_NO_MATCHES") or "No players matched" ) then
-        -- Suppress the "No players matched" message if we have a pending whisper query
-        for k, v in pairs(WhisperQueue) do
-            if string.find(msg, k) then return false end
-        end
-        return false -- Also suppresses the "Found X matches" message.
-    end
+	if event == "CHAT_MSG_SYSTEM" then
+		if msg and string.find(msg, GetText("WHO_NO_MATCHES") or "No players matched" ) then
+			-- Suppress the "No players matched" message if we have a pending whisper query
+			for k, v in pairs(WhisperQueue) do
+				if string.find(msg, k) then return false end
+			end
+			return false -- Also suppresses the "Found X matches" message.
+		end
+
+		for k, v in pairs(WhisperQueue) do
+			if msg and string.find(msg, k) then return false end
+		end
+	end
     
     -- If the message is not a target for suppression, allow it to display.
     return true
