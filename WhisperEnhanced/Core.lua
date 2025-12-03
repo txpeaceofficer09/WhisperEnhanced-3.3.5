@@ -21,25 +21,34 @@ local function WhisperFilter(self, event, msg, sender, ...)
     return true
 end
 
+local function BlockWhoResults(self, event, msg, ...)
+	if ( whoPending and msg:find(currentQuery) ) or msg:match("(.+) players total") or msg:match("(.+) player total") then
+		return true
+	end
+	return false
+end
+
 ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", WhisperFilter)
 ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", WhisperFilter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", BlockWhoResults)
 
 local frame = CreateFrame("Frame")
-frame:RegisterEvent("WHO_LIST_UPDATE")
 
 local function ProcessWhoResult()
-    local found = false
-    local playerClass, playerLevel
+	print("Processing who whisper results.")
 
-    for i = 1, GetNumWhoResults() do
-        local name, guild, level, race, class = GetWhoInfo(i)
-        if name == currentQuery then
-            found = true
-            playerClass = class
-            playerLevel = level
-            break
-        end
-    end
+	local found = false
+	local playerClass, playerLevel
+
+	for i = 1, GetNumWhoResults() do
+		local name, guild, level, race, class = GetWhoInfo(i)
+		if name == currentQuery then
+			found = true
+			playerClass = class
+			playerLevel = level
+			break
+		end
+	end
 
     for i = #whisperQueue, 1, -1 do
         local data = whisperQueue[i]
@@ -72,18 +81,6 @@ local function ProcessWhoResult()
     end
 end
 
+frame:RegisterEvent("WHO_LIST_UPDATE")
+
 frame:SetScript("OnEvent", ProcessWhoResult)
-
-local function BlockWhoResults(self, event, msg, ...)
-	--[[
-    if whoPending and msg:find(currentQuery) then
-        return true
-    end
-	]]
-	if whoPending and ( msg:find(currentQuery) or msg:match("(.+) players total") or msg:match("(.+) player total") ) then
-		return true
-	end
-	return false
-end
-
-ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", BlockWhoResults)
