@@ -80,7 +80,7 @@ local function BlockWhoResults(self, event, msg, ...)
         return true
     end
 	]]
-	if whoPending and ( msg:find(currentQuery) or msg:match("(.+) players total") ) then
+	if whoPending and ( msg:find(currentQuery) or msg:match("(.+) players total") or msg:match("(.+) player total") ) then
 		return true
 	end
 	return false
