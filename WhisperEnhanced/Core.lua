@@ -52,7 +52,7 @@ local function ProcessWhoResult()
                 modifiedMsg = "[? ?] " .. data.msg
             end
 
-            ChatFrame1:AddMessage(
+            DEFAULT_CHAT_FRAME:AddMessage(
                 string.format("|cffFFFF00(Delayed Whisper)|r [%s]: %s",
                     data.sender, modifiedMsg
                 )
@@ -75,10 +75,15 @@ end
 frame:SetScript("OnEvent", ProcessWhoResult)
 
 local function BlockWhoResults(self, event, msg, ...)
+	--[[
     if whoPending and msg:find(currentQuery) then
         return true
     end
-    return false
+	]]
+	if whoPending and ( msg:find(currentQuery) or msg:match("(.+) players total") ) then
+		return true
+	end
+	return false
 end
 
 ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", BlockWhoResults)
