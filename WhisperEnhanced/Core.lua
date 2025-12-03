@@ -26,6 +26,7 @@ local function BlockWhoResults(self, event, msg, ...)
 	if ( whoPending and msg:find(currentQuery) ) or msg:match("(.+) players total") or msg:match("(.+) player total") then
 		return true
 	end
+	if msg:find("player total") then return true end
 	return false
 end
 
@@ -43,14 +44,12 @@ local function ProcessWhoResult()
 
 	for i = 1, GetNumWhoResults() do
 		local name, guild, level, race, class = GetWhoInfo(i)
-		--[[
 		if name == currentQuery then
 			found = true
 			playerClass = class
 			playerLevel = level
 			break
 		end
-		]]
 		--if not PlayerData[name] then
 			PlayerData[name] = {
 				["guild"] = guild,
@@ -61,7 +60,7 @@ local function ProcessWhoResult()
 		--end
 	end
 
-	--[[
+
     for i = #whisperQueue, 1, -1 do
         local data = whisperQueue[i]
         if data.sender == currentQuery then
@@ -91,9 +90,6 @@ local function ProcessWhoResult()
         whoPending = true
         SendWho("n-" .. currentQuery)
     end
-	]]
-	currentQuery = nil
-	whoPending = false
 end
 
 local function OnUpdate(self, elapsed)
@@ -125,4 +121,4 @@ end
 frame:RegisterEvent("WHO_LIST_UPDATE")
 
 frame:SetScript("OnEvent", ProcessWhoResult)
-frame:SetScript("OnUpdate", OnUpdate)
+--frame:SetScript("OnUpdate", OnUpdate)
