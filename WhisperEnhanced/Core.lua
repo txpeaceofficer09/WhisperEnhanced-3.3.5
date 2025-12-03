@@ -78,9 +78,7 @@ local function OnEvent(self, event, ...)
                 )
 
                 -- 3. Print the Enhanced Message Manually
-                IsPrintingEnhanced = true -- Set the flag to bypass the filter
                 DEFAULT_CHAT_FRAME:AddMessage(finalMessage, 0.5, 0.7, 1.0, 1.0, 1) -- Print with slight blue tint
-                IsPrintingEnhanced = false -- Reset the flag
 
                 -- 4. Clean up the queue
                 WhisperQueue[name] = nil
@@ -101,9 +99,9 @@ WhoWhisperer:RegisterEvent("WHO_LIST_UPDATE")
 -- 2. CHAT FILTER (THE "HIDE WHO" AND "SUPPRESS WHISPER" LOGIC)
 --------------------------------------------------------------------------------
 
-local function ChatFilter(self, event, msg, ...)
+local function ChatFilter(self, event, msg, sender, ...)
     if event == "CHAT_MSG_WHISPER" then
-	return false
+	return true
     end
     
     -- Filter 2: Suppress the results of the automated /who command.
@@ -115,16 +113,16 @@ local function ChatFilter(self, event, msg, ...)
 			for k, v in pairs(WhisperQueue) do
 				if string.find(msg, k) then return false end
 			end
-			return false -- Also suppresses the "Found X matches" message.
+			return true -- Also suppresses the "Found X matches" message.
 		end
 
 		for k, v in pairs(WhisperQueue) do
-			if msg and string.find(msg, k) then return false end
+			if msg and string.find(msg, k) then return true end
 		end
 	end
     
     -- If the message is not a target for suppression, allow it to display.
-    return true
+    return false, msg, sender, ...
 end
 
 -- Hook the chat filter mechanism to apply our custom filtering logic
