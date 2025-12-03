@@ -1,15 +1,16 @@
 local whisperQueue = {}
 local whoPending = false
 local currentQuery = nil
+local PlayerData = {}
 
 local function WhisperFilter(self, event, msg, sender, ...)
     sender = sender:match("([^%-]+)")
 
     table.insert(whisperQueue, {
-        event = event,
-        msg = msg,
-        sender = sender,
-        args = { ... },
+        ["event"] = event,
+        ["msg"] = msg,
+        ["sender"] = sender,
+        ["args"] = { ... },
     })
 
     if not whoPending then
@@ -42,14 +43,25 @@ local function ProcessWhoResult()
 
 	for i = 1, GetNumWhoResults() do
 		local name, guild, level, race, class = GetWhoInfo(i)
+		--[[
 		if name == currentQuery then
 			found = true
 			playerClass = class
 			playerLevel = level
 			break
 		end
+		]]
+		--if not PlayerData[name] then
+			PlayerData[name] = {
+				["guild"] = guild,
+				["level"] = level,
+				["race"] = race,
+				["class"] = class,
+			}
+		--end
 	end
 
+	--[[
     for i = #whisperQueue, 1, -1 do
         local data = whisperQueue[i]
         if data.sender == currentQuery then
@@ -79,8 +91,38 @@ local function ProcessWhoResult()
         whoPending = true
         SendWho("n-" .. currentQuery)
     end
+	]]
+	currentQuery = nil
+	whoPending = false
+end
+
+local function OnUpdate(self, elapsed)
+	self.timer = ( self.timer or 0 ) + elapsed
+
+	if self.timer >= 0.2 then
+		if #whisperQueue > 0 then
+			for i = #whisperQueue, 1, -1 do
+				local data = whisperQueue[i]
+				local msg
+
+				for k,v in pairs(PlayerData) do
+					if v.sender == data.sender then
+						msg = ("[%s][%s %d]: %s"):format(k, data.class, data.level, data.msg)
+						break
+					end
+				end
+
+				DEFAULT_CHAT_FRAME:AddMessage(msg)
+
+				table.remove(whisperQueue, i)
+			end
+		end
+
+		self.timer = 0
+	end
 end
 
 frame:RegisterEvent("WHO_LIST_UPDATE")
 
 frame:SetScript("OnEvent", ProcessWhoResult)
+frame:SetScript("OnUpdate", OnUpdate)
