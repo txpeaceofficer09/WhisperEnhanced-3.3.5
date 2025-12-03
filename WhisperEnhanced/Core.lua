@@ -99,7 +99,7 @@ WhoWhisperer:RegisterEvent("WHO_LIST_UPDATE")
 -- 2. CHAT FILTER (THE "HIDE WHO" AND "SUPPRESS WHISPER" LOGIC)
 --------------------------------------------------------------------------------
 
-function WhisperEnhanced:ChatFilter(self, event, msg, sender, ...)
+local function ChatFilter(self, event, msg, sender, ...)
     if event == "CHAT_MSG_WHISPER" then
 	return true
     end
@@ -126,7 +126,8 @@ function WhisperEnhanced:ChatFilter(self, event, msg, sender, ...)
 end
 
 -- Hook the chat filter mechanism to apply our custom filtering logic
-ChatFrame_AddMessageEventFilter(WhisperEnhanced[ChatFilter])
+ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", ChatFilter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", ChatFilter)
 
 -- Initialization message
 PrintMessage(COLOR_PREFIX .. "[" .. addonName .. "]: " .. COLOR_END .. "Enhanced whisper lookup active. Incoming whispers will be briefly delayed.")
