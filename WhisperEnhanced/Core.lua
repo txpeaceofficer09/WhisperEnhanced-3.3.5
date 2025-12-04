@@ -57,7 +57,7 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", ChatFilter)
 ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", ChatFilter)
 ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", ChatFilter)
 
-[Abracadaver]: Level 48 Undead Mage <Reign of Darkness> - Searing Gorge
+--|Hplayer:Abracadaver|h[Abracadaver]|h: Level 48 Undead Mage <Reign of Darkness> - Searing Gorge
 
 --[[
 local function OnEvent(self, event, ...)
