@@ -69,15 +69,15 @@ local function ChatFilter(self, event, msg, sender, ...)
 
 				if v.event == "CHAT_MSG_WHISPER" then
 					if PlayerData[v.name].guild then
-						print("|cffff80ff|Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff] <|cffaaffaa%s|r>: %s|r":format(v.name, classColor, v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, PlayerData[v.name].guild, v.msg)
+						print(("|cffff80ff|Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff] <|cffaaffaa%s|r>: %s|r"):format(v.name, classColor, v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, PlayerData[v.name].guild, v.msg)
 					else
-						print("|cffff80ff|Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff]: %s|r":format(v.name, classColor, v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, v.msg)
+						print(("|cffff80ff|Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff]: %s|r"):format(v.name, classColor, v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, v.msg)
 					end
 				elseif v.event == "CHAT_MSG_WHISPER_INFORM" then
 					if PlayerData[v.name].guild then
-						print("|cffff80ffTo |Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff] <|cffaaffaa%s|r>: %s|r":format(v.name, classColor, v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, PlayerData[v.name].guild, v.msg)
+						print(("|cffff80ffTo |Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff] <|cffaaffaa%s|r>: %s|r"):format(v.name, classColor, v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, PlayerData[v.name].guild, v.msg)
 					else
-						print("|cffff80ffTo |Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff]: %s|r":format(v.name, classColor, v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, v.msg)
+						print(("|cffff80ffTo |Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff]: %s|r"):format(v.name, classColor, v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, v.msg)
 					end
 				end
 				table.remove(whisperQueue, k)
