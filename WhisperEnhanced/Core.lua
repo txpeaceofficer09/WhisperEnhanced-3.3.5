@@ -9,13 +9,13 @@ local function ChatFilter(self, event, msg, sender, ...)
 			--local classIcon =  ("|TInterface\\Icons\\ClassIcon_%s:14:14|t"):format(PlayerData[sender].class:upper())
 			--local raceIcon = ("|TInterface\\TargetingFrame\\UI-TargetingFrame-%s:14:14|t"):format(PlayerData[sender].race)
 
-			local classIcon = ("|TInterface\\Icons\\ClassIcon_%s:14:14|t"):format(PlayerData[sender].class:upper())
-			local raceIcon = ("|TInterface\\TargetingFrame\\UI-TargetingFrame-%s:14:14|t"):format(PlayerData[sender].race:gsub("%s+", ""))
+			--local classIcon = ("|TInterface\\Icons\\ClassIcon_%s:14:14|t"):format(PlayerData[sender].class:upper())
+			--local raceIcon = ("|TInterface\\TargetingFrame\\UI-TargetingFrame-%s:14:14|t"):format(PlayerData[sender].race:gsub("%s+", ""))
 
 			if PlayerData[sender].guild then
-				return false, ("[%s %s %d] <%s>: %s"):format(raceIcon, classIcon, PlayerData[sender].level, PlayerData[sender].guild, msg), sender, ...
+				return false, ("[|cffffffff%s %s %d|r] <|cffaaffaa%s|r>: %s"):format(PlayerData[sender].race, PlayerData[sender].class, PlayerData[sender].level, PlayerData[sender].guild, msg), sender, ...
 			else
-				return false, ("[%s %s %d]: %s"):format(raceIcon, classIcon, PlayerData[sender].level, msg), sender, ...
+				return false, ("[|cffffffff%s %s %d|r]: %s"):format(raceIcon, classIcon, PlayerData[sender].level, msg), sender, ...
 			end
 		else
 			table.insert(whoQueue, sender)
