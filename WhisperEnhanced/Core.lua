@@ -20,7 +20,7 @@ local function ChatFilter(self, event, msg, sender, ...)
 	elseif event == "CHAT_MSG_SYSTEM" then
 		--local name, level, race, class, guild, zone = msg:match("^(.-): Level (%d+) (%w+) (%w+) <%s*(.-)%s*> %- (.+)$")
 		--print(("|Hplayer:Abracadaver|h[Abracadaver]|h: Level 48 Undead Mage <Reign of Darkness> - Searing Gorge"):match(^|Hplayer:(%w)|h%[%w+%]|h: Level (%d+) (%w+) (%w+) <%s*(.-)%s*> %- (.+)$"))
-		local name, level, race, class, guild, zone = msg:match(^|Hplayer:(%w)|h%[%w+%]|h: Level (%d+) (%w+) (%w+) <%s*(.-)%s*> %- (.+)$"))
+		local name, level, race, class, guild, zone = msg:match("^|Hplayer:([^|]+)|h%[[^%]]+%]|h: Level (%d+) (%w+) (%w+) <%s*(.-)%s*> %- (.+)$")
 
 		if name then
 			--name = name:match("^|Hplayer:([^|]+)|h")
