@@ -6,10 +6,16 @@ local function ChatFilter(self, event, msg, sender, ...)
 
 	if event == "CHAT_MSG_WHISPER" or event == "CHAT_MSG_WHISPER_INFORM" then
 		if PlayerData[sender] then
+			--local classIcon =  ("|TInterface\\Icons\\ClassIcon_%s:14:14|t"):format(PlayerData[sender].class:upper())
+			--local raceIcon = ("|TInterface\\TargetingFrame\\UI-TargetingFrame-%s:14:14|t"):format(PlayerData[sender].race)
+
+			local classIcon = ("|TInterface\\Icons\\ClassIcon_%s:14:14|t"):format(PlayerData[sender].class:upper())
+			local raceIcon = ("|TInterface\\TargetingFrame\\UI-TargetingFrame-%s:14:14|t"):format(PlayerData[sender].race:gsub("%s+", ""))
+
 			if PlayerData[sender].guild then
-				return false, ("[|TInterface\\TargetingFrame\\UI-TargetingFrame-%s:14:14|t|TInterface\\Icons\\ClassIcon_%s:14:14|t %d] <%s>: %s"):format(PlayerData[sender].race, PlayerData[sender].class:upper(), PlayerData[sender].level, PlayerData[sender].guild, msg), sender, ...
+				return false, ("[%s %s %d] <%s>: %s"):format(raceIcon, classIcon, PlayerData[sender].level, PlayerData[sender].guild, msg), sender, ...
 			else
-				return false, ("[%s %d]: %s"):format(PlayerData[sender].class, PlayerData[sender].level, msg), sender, ...
+				return false, ("[%s %s %d]: %s"):format(raceIcon, classIcon, PlayerData[sender].level, msg), sender, ...
 			end
 		else
 			table.insert(whoQueue, sender)
