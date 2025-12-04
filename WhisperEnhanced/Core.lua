@@ -7,7 +7,7 @@ local PlayerData = {}
 local whoQueue = {}
 
 function frame:print(msg)
-	print(("|cffffaaff[WHISPERENHANCED]:|r %s):format(msg))
+	print(("|cffffaaff[WHISPERENHANCED]:|r %s"):format(msg))
 end
 
 local function ChatFilter(self, event, msg, sender, ...)
