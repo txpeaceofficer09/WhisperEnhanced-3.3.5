@@ -43,17 +43,12 @@ local function ChatFilter(self, event, msg, sender, ...)
 				["msg"] = msg,
 			})
 
-			--return false, msg, sender, ...
 			return true
 		end
 	elseif event == "CHAT_MSG_SYSTEM" then
-		--local name, level, race, class, guild, zone = msg:match("^(.-): Level (%d+) (%w+) (%w+) <%s*(.-)%s*> %- (.+)$")
-		--print(("|Hplayer:Abracadaver|h[Abracadaver]|h: Level 48 Undead Mage <Reign of Darkness> - Searing Gorge"):match(^|Hplayer:(%w)|h%[%w+%]|h: Level (%d+) (%w+) (%w+) <%s*(.-)%s*> %- (.+)$"))
 		local name, level, race, class, guild, zone = msg:match("^|Hplayer:([^|]+)|h%[[^%]]+%]|h: Level (%d+) (%w+) (%w+) <%s*(.-)%s*> %- (.+)$")
 
 		if name then
-			--name = name:match("^|Hplayer:([^|]+)|h")
-
 			PlayerData[name] = {
 				["level"] = level,
 				["race"] = race,
@@ -69,13 +64,13 @@ local function ChatFilter(self, event, msg, sender, ...)
 
 				if v.event == "CHAT_MSG_WHISPER" then
 					if PlayerData[v.name].guild then
-						print(("|cffff80ff|Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff] <|cffaaffaa%s|r>: %s|r"):format(v.name, classColor, v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, PlayerData[v.name].guild, v.msg))
+						print(("|cffff80ff|Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff] <|cffaaffaa%s|cffff80ff>: %s|r"):format(v.name, classColor, v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, PlayerData[v.name].guild, v.msg))
 					else
 						print(("|cffff80ff|Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff]: %s|r"):format(v.name, classColor, v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, v.msg))
 					end
 				elseif v.event == "CHAT_MSG_WHISPER_INFORM" then
 					if PlayerData[v.name].guild then
-						print(("|cffff80ffTo |Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff] <|cffaaffaa%s|r>: %s|r"):format(v.name, classColor, v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, PlayerData[v.name].guild, v.msg))
+						print(("|cffff80ffTo |Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff] <|cffaaffaa%s|cffff80ff>: %s|r"):format(v.name, classColor, v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, PlayerData[v.name].guild, v.msg))
 					else
 						print(("|cffff80ffTo |Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff]: %s|r"):format(v.name, classColor, v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, v.msg))
 					end
@@ -87,10 +82,15 @@ local function ChatFilter(self, event, msg, sender, ...)
 		for k,v in ipairs(whoQueue) do
 			if msg:find(v) then
 				table.remove(whoQueue, k)
+
+				if whoQueue[1] then
+					SendWho(whoQueue[1])
+				end
+
 				return true
 			end
 		end
-        
+
 		if msg:find("player total") then
 			return true
 		end
