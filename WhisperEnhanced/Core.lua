@@ -28,6 +28,17 @@ local function ChatFilter(self, event, msg, sender, ...)
 		end
 	elseif event == "CHAT_MSG_SYSTEM" then
 		for k,v in ipairs(whoQueue) do
+			local name, level, race, class, guild, zone = msg:match("^(.-): Level (%d+) (%w+) (%w+) <%s*(.-)%s*> %- (.+)$")
+			name = name:match("^|Hplayer:([^|]+)|h")
+
+			PlayerData[name] = {
+				["level"] = level,
+				["race"] = race,
+				["class"] = class,
+				["guild"] = guild,
+				["zone"] = zone,
+			}
+
 			if msg:find(v) then
 				table.remove(whoQueue, k)
 				return true
@@ -46,6 +57,9 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", ChatFilter)
 ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", ChatFilter)
 ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", ChatFilter)
 
+[Abracadaver]: Level 48 Undead Mage <Reign of Darkness> - Searing Gorge
+
+--[[
 local function OnEvent(self, event, ...)
 	if event == "WHO_LIST_UPDATE" then
 		self:print("Who list updated.")
@@ -63,6 +77,4 @@ local function OnEvent(self, event, ...)
 		end
 	end
 end
-
-frame:RegisterEvent("WHO_LIST_UPDATE")
-frame:SetScript("OnEvent", OnEvent)
+]]
