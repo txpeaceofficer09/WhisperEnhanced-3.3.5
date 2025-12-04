@@ -65,7 +65,7 @@ local function ChatFilter(self, event, msg, sender, ...)
 
 		for k,v in ipairs(whisperQueue) do
 			if PlayerData[v.name] then
-				local classColor = GetClassColor(PlayerData[v.name].class)
+				local classColor = GetClassColorHex(PlayerData[v.name].class)
 
 				if v.event == "CHAT_MSG_WHISPER" then
 					if PlayerData[v.name].guild then
