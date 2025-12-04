@@ -2,6 +2,7 @@ local whisperQueue = {}
 local whoPending = false
 local currentQuery = nil
 local PlayerData = {}
+local whoQueue = {}
 
 local function WhisperFilter(self, event, msg, sender, ...)
 	sender = sender:match("([^%-]+)")
