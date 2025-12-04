@@ -41,7 +41,7 @@ local function ChatFilter(self, event, msg, sender, ...)
 				["event"] = event,
 				["name"] = sender,
 				["msg"] = msg,
-			}
+			})
 
 			--return false, msg, sender, ...
 			return true
