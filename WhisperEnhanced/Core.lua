@@ -6,36 +6,26 @@ local PlayerData = {}
 local function WhisperFilter(self, event, msg, sender, ...)
 	sender = sender:match("([^%-]+)")
 
-	if PlayerData[sender] then
-		if PlayerData[sender].guild then
-			return false, ("[%s %d] <%s>: %s"):format(PlayerData[sender].class, PlayerData[sender].level, PlayerData[sender].guild, msg), sender, ...
+	--if event == "CHAT_MSG_WHISPER" then
+		if PlayerData[sender] then
+			if PlayerData[sender].guild then
+				return false, ("[%s %d] <%s>: %s"):format(PlayerData[sender].class, PlayerData[sender].level, PlayerData[sender].guild, msg), sender, ...
+			else
+				return false, ("[%s %d]: %s"):format(PlayerData[sender].class, PlayerData[sender].level, msg), sender, ...
+			end
 		else
-			return false, ("[%s %d]: %s"):format(PlayerData[sender].class, PlayerData[sender].level, msg), sender, ...
+			table.insert(whoQueue, sender)
+			SendWho("n-"..sender)
+
+			return false, msg, sender, ...
 		end
-	else
-		SendWho("n-"..sender)
-		return false, msg, sender, ...
-	end
---[[
-    table.insert(whisperQueue, {
-        event = event,
-        msg = msg,
-        sender = sender,
-        args = { ... },
-    })
-
-    if not whoPending then
-        currentQuery = sender
-        whoPending = true
-        SendWho("n-" .. sender)
-    end
-
-    return true 
-]]
+	--elseif event == "CHAT_MSG_WHISPER_INFORM" then
+		
+	--end
 end
 
 ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", WhisperFilter)
---ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", WhisperFilter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", WhisperFilter)
 
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("WHO_LIST_UPDATE")
@@ -52,6 +42,7 @@ local function ProcessWhoResult()
 		["race"] = race,
 		["class"] = class,
 	}
+	print("|cffffaa00[WHISPERENHANCED]:|r added |cff336699"..name.."|r player data.")
 	--[[
         if name == currentQuery then
             found = true
@@ -98,16 +89,18 @@ end
 frame:SetScript("OnEvent", ProcessWhoResult)
 
 local function BlockWhoResults(self, event, msg, ...)
-    if whoPending then
-        if msg:find(currentQuery) then
-            return true
-        end
+	for k,v in ipairs(whoQueue) do
+		if msg:find(v) then
+			table.remove(whoQueue, k)
+			return true
+		end
+	end
         
         if msg:find("player total") then
             return true
         end
-    end
-    return false
+
+	return false, msg, ...
 end
 
 ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", BlockWhoResults)
