@@ -1,14 +1,5 @@
-local frame = CreateFrame("Frame")
-
-local whisperQueue = {}
-local whoPending = false
-local currentQuery = nil
 local PlayerData = {}
 local whoQueue = {}
-
-function frame:print(msg)
-	print(("|cffffaaff[WHISPERENHANCED]:|r %s"):format(msg))
-end
 
 local function ChatFilter(self, event, msg, sender, ...)
 	sender = sender:match("([^%-]+)")
@@ -27,9 +18,12 @@ local function ChatFilter(self, event, msg, sender, ...)
 			return false, msg, sender, ...
 		end
 	elseif event == "CHAT_MSG_SYSTEM" then
-		for k,v in ipairs(whoQueue) do
-			local name, level, race, class, guild, zone = msg:match("^(.-): Level (%d+) (%w+) (%w+) <%s*(.-)%s*> %- (.+)$")
-			name = name:match("^|Hplayer:([^|]+)|h")
+		--local name, level, race, class, guild, zone = msg:match("^(.-): Level (%d+) (%w+) (%w+) <%s*(.-)%s*> %- (.+)$")
+		--print(("|Hplayer:Abracadaver|h[Abracadaver]|h: Level 48 Undead Mage <Reign of Darkness> - Searing Gorge"):match(^|Hplayer:(%w)|h%[%w+%]|h: Level (%d+) (%w+) (%w+) <%s*(.-)%s*> %- (.+)$"))
+		local name, level, race, class, guild, zone = msg:match(^|Hplayer:(%w)|h%[%w+%]|h: Level (%d+) (%w+) (%w+) <%s*(.-)%s*> %- (.+)$"))
+
+		if name then
+			--name = name:match("^|Hplayer:([^|]+)|h")
 
 			PlayerData[name] = {
 				["level"] = level,
@@ -38,7 +32,9 @@ local function ChatFilter(self, event, msg, sender, ...)
 				["guild"] = guild,
 				["zone"] = zone,
 			}
+		end
 
+		for k,v in ipairs(whoQueue) do
 			if msg:find(v) then
 				table.remove(whoQueue, k)
 				return true
@@ -58,23 +54,3 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", ChatFilter)
 ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", ChatFilter)
 
 --|Hplayer:Abracadaver|h[Abracadaver]|h: Level 48 Undead Mage <Reign of Darkness> - Searing Gorge
-
---[[
-local function OnEvent(self, event, ...)
-	if event == "WHO_LIST_UPDATE" then
-		self:print("Who list updated.")
-
-		local numResults = GetNumWhoResults()
-
-		for i = 1, GetNumWhoResults(), 1 do
-			local name, guild, level, race, class = GetWhoInfo(i)
-			PlayerData[name] = {
-				["guild"] = guild,
-				["level"] = level,
-				["race"] = race,
-				["class"] = class,
-			}
-		end
-	end
-end
-]]
