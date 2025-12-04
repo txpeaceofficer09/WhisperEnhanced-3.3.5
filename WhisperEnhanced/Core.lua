@@ -1,5 +1,21 @@
 local PlayerData = {}
 local whoQueue = {}
+local whisperQueue = {}
+
+local function GetClassColorHex(class)
+	if not class then return "FFFFFF" end  -- fallback: white
+
+	class = class:upper()
+
+	local c = RAID_CLASS_COLORS[class]
+	if not c then return "FFFFFF" end  -- unknown class → white
+
+	return string.format("%02X%02X%02X",
+		c.r * 255,
+		c.g * 255,
+		c.b * 255
+	)
+end
 
 local function ChatFilter(self, event, msg, sender, ...)
 	sender = sender:match("([^%-]+)")
@@ -21,7 +37,14 @@ local function ChatFilter(self, event, msg, sender, ...)
 			table.insert(whoQueue, sender)
 			SendWho("n-"..sender)
 
-			return false, msg, sender, ...
+			table.insert(whisperQueue, {
+				["event"] = event,
+				["name"] = sender,
+				["msg"] = msg,
+			}
+
+			--return false, msg, sender, ...
+			return true
 		end
 	elseif event == "CHAT_MSG_SYSTEM" then
 		--local name, level, race, class, guild, zone = msg:match("^(.-): Level (%d+) (%w+) (%w+) <%s*(.-)%s*> %- (.+)$")
@@ -38,6 +61,25 @@ local function ChatFilter(self, event, msg, sender, ...)
 				["guild"] = guild,
 				["zone"] = zone,
 			}
+		end
+
+		for k,v in ipairs(whisperQueue) do
+			if PlayerData[v.name] then
+				if v.event == "CHAT_MSG_WHISPER" then
+					if PlayerData[v.name].guild then
+						print("|cffff80ff|Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff] <|cffaaffaa%s|r>: %s|r":format(v.name, GetClassColor(PlayerData[v.name].class), v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, PlayerData[v.name].guild, v.msg)
+					else
+						print("|cffff80ff|Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff]: %s|r":format(v.name, GetClassColor(PlayerData[v.name].class), v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, v.msg)
+					end
+				elseif v.event == "CHAT_MSG_WHISPER_INFORM" then
+					if PlayerData[v.name].guild then
+						print("|cffff80ffTo |Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff] <|cffaaffaa%s|r>: %s|r":format(v.name, GetClassColor(PlayerData[v.name].class), v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, PlayerData[v.name].guild, v.msg)
+					else
+						print("|cffff80ffTo |Hplayer:%s|h[|cff%s%s|cffff80ff]|h: [|cffffffff%s %s %d|cffff80ff]: %s|r":format(v.name, GetClassColor(PlayerData[v.name].class), v.name, PlayerData[v.name].race, PlayerData[v.name].class, PlayerData[v.name].level, v.msg)
+					end
+				end
+				table.remove(whisperQueue, k)
+			end
 		end
 
 		for k,v in ipairs(whoQueue) do
